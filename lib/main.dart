@@ -41,7 +41,7 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
-          '/': (context) => const HomeScreen(),
+          '/': (context) => const RegisterScreen(),
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const HomeScreen(),
           '/create_event': (context) => const CreateEventScreen(),
