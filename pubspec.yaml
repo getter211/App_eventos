@@ -1,0 +1,36 @@
+name: proyecto_eventos
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  responsive_grid: ^2.4.4
+  provider: ^6.1.2
+  table_calendar: ^3.1.2
+  flutter_lints: ^4.0.0
+  intl: ^0.19.0
+  http: ^1.2.1
+  datetime_picker_formfield_new: ^2.1.0
+  meta: ^1.12.0
+  logger: ^2.4.0
+  calendar_view: ^1.2.0
+  flutter_map_cancellable_tile_provider: ^3.0.0
+  flutter_map: ^7.0.2
+  geolocator: ^12.0.0
+  latlong2: ^0.9.1
+  shared_preferences: ^2.2.3
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/portada.jpg
+    - assets/images/login.jpg
+    - assets/images/cardEvento.jpg
