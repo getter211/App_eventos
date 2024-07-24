@@ -43,11 +43,13 @@ class _UserEventsScreenState extends State<UserEventsScreen> {
     });
   }
 
-  Future<int?> getUserId() async {
+   Future<int?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _userId = prefs.getInt('userIdx') ?? 0;
     setState(() {});
   }
+
+ 
 
   void _filterEvents(int filter) {
     setState(() {

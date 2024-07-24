@@ -26,12 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<GetAllEventsResponseDto> _eventosTemp = [];
   List<GetAllEventsResponseDto> _eventosOriginal = [];
   int xxx = 0;
-  // 0 default
-  // 1 active
-  // 2 inactive
-  // 3 completed
-  // 4 cancelled
-  // 5 date
 
   @override
   void initState() {
@@ -71,43 +65,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final eventProvider = Provider.of<EventProvider>(context);
-    final userProvider = Provider.of<UserProvider>(context); // Accede al UserProvider
+    final userProvider = Provider.of<UserProvider>(context);
 
     List<GetAllEventsResponseDto> eventos = eventProvider.events;
     _eventosOriginal = [...eventos];
     if (xxx == 0) {
       _eventosTemp = [...eventos];
-    }
-    if (xxx != 0) {
-      DateTime now = DateTime.now().toUtc(); // Asegúrate de que la fecha actual esté en UTC
-
-      for (GetAllEventsResponseDto element in _eventosTemp) {
-        try {
-          // Usa la fecha y hora directamente desde `date`
-          DateTime eventDateTime = element.date.toUtc();
-
-          // Ajustar la hora si el campo `time` proporciona una hora diferente
-          if (element.time.isNotEmpty) {
-            List<String> timeParts = element.time.split(':');
-            eventDateTime = DateTime(
-              eventDateTime.year,
-              eventDateTime.month,
-              eventDateTime.day,
-              int.parse(timeParts[0]),
-              int.parse(timeParts[1]),
-              int.parse(timeParts[2]),
-            ).toUtc();
-          }
-
-          if (eventDateTime.isBefore(now)) {
-            print('Evento pasado: ${element.date.toIso8601String()} ${element.time}');
-          }
-        } catch (e) {
-          // Manejo de errores si el formato es incorrecto
-          print('Error al combinar fecha y hora: $e');
-          continue; // Continúa con el siguiente elemento en caso de error
-        }
-      }
     }
 
     return Scaffold(
@@ -150,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('cerrar sesión'),
+              title: const Text('Cerrar sesión'),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
@@ -293,6 +256,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           ResponsiveGridRow(
                             children: _eventosTemp.map((event) {
+                              Color textColor;
+                              switch (event.status) {
+                                case 'active':
+                                  textColor = Colors.green; // Color para activo
+                                  break;
+                                case 'inactive':
+                                  textColor = Colors.grey; // Color para inactivo
+                                  break;
+                                case 'completed':
+                                  textColor = Colors.blue; // Color para completado
+                                  break;
+                                case 'cancelled':
+                                  textColor = Colors.red; // Color para cancelado
+                                  break;
+                                default:
+                                  textColor = Colors.black; // Color predeterminado
+                              }
+
                               return ResponsiveGridCol(
                                 xs: 12,
                                 sm: 6,
@@ -305,16 +286,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       final eventProvider =
                                           Provider.of<EventProvider>(context, listen: false);
                                       eventProvider.refreshEvents();
-
-// el parametro int solo es por que lo puso gpt si a ti te sirve retornar algun mensaje, texto o algo puedes retornarlo de tu card y mandarlo a tu home es una mejor forma de manejar los estados a este tipo de llamados se les conoce como inyeccuoin de codig o eso te facilitaram mira
-// digamos que en la card validas cuando apreta y si todo esta bien haras estoi
                                     },
                                     item: event,
                                     imageUrl: 'assets/images/cardEvento.jpg',
                                     title: event.name,
                                     guests: event.description,
                                     isFree: true,
-                                    dateTime: event.date,
+                                    dateTime: event.date, // Asigna el color aquí
                                   ),
                                 ),
                               );

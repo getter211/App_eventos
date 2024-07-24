@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_eventos/dtos/response/get_all_events_response.dart';
+import 'package:proyecto_eventos/pages/home_screen.dart';
 import 'package:proyecto_eventos/providers/event_providers.dart';
 import 'package:proyecto_eventos/widgets/forms_createEvent.dart';
 import 'package:proyecto_eventos/widgets/my_dialogs.dart';
@@ -29,6 +31,7 @@ class CardEvent extends StatefulWidget {
     required this.guests,
     required this.onTap,
     this.isEdit = false,
+    
   });
 
   @override
@@ -166,6 +169,7 @@ class _CardEventState extends State<CardEvent> {
                       const SizedBox(height: 5),
                       Text(
                         widget.item.status,
+                        
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -235,6 +239,9 @@ class _CardEventState extends State<CardEvent> {
                       ),
                       const SizedBox(width: 10),
                       Visibility(
+                        visible: widget.isEdit,
+                        child: DeleteEventButton(eventId: widget.item.id)),
+                      Visibility(
                         visible: widget.isEdit
                             ? false
                             : xxx == widget.item.user.id
@@ -301,6 +308,65 @@ class _CardEventState extends State<CardEvent> {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+class DeleteEventButton extends StatefulWidget {
+  final int eventId;
+
+  const DeleteEventButton({super.key, required this.eventId});
+
+  @override
+  State<DeleteEventButton> createState() => _DeleteEventButtonState();
+}
+
+class _DeleteEventButtonState extends State<DeleteEventButton> {
+  Future<void> deleteEvent(int id) async {
+    final url = Uri.parse('http://localhost:3000/api/events/$id');
+
+    try {
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        // Si la eliminación es exitosa, puedes mostrar un mensaje o realizar alguna acción
+        print('Event deleted successfully');
+        final eventProvider = Provider.of<EventProvider>(context, listen: false);
+        eventProvider.refreshEvents(); Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        // Si hay un error, puedes manejarlo aquí
+        print('Failed to delete the event');
+      }
+    } catch (error) {
+      // Si hay un error en la solicitud, puedes manejarlo aquí
+      print('Error: $error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.all(16),
+      ),
+      onPressed: () async {
+        await deleteEvent(widget.eventId);
+        // Aquí puedes agregar alguna acción después de eliminar el evento, como mostrar un snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Evento eliminado'),
+          ),
+        );
+      },
+      child: const Text('Eliminar', style: TextStyle(color: Colors.white)),
     );
   }
 }

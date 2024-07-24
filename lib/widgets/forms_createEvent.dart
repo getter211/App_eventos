@@ -13,10 +13,12 @@ import 'package:proyecto_eventos/dtos/response/get_all_events_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:proyecto_eventos/pages/home_screen.dart';
 import 'package:proyecto_eventos/providers/event_providers.dart';
+import 'package:proyecto_eventos/providers/user_provider.dart';
 import 'package:proyecto_eventos/widgets/my_dialogs.dart';
 import 'dart:convert';
 
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Estatus {
   final int id;
@@ -63,6 +65,8 @@ class _AddEventsState extends State<AddEvents> {
   double lat = 0.0;
   double long = 0.0;
   Estatus? _selectedStatus;
+  int? _userId;
+ 
 
   final List<Estatus> estatusList = [
     Estatus(1, 'active'),
@@ -82,6 +86,7 @@ class _AddEventsState extends State<AddEvents> {
       mapController.move(LatLng(lat, long), 15.0);
     });
     intDataUser();
+    getUserId();
   }
 
   Future<void> intDataUser() async {
@@ -104,16 +109,17 @@ class _AddEventsState extends State<AddEvents> {
       // Verifica si `widget.event!.time` es un `DateTime` o un `String`
       if (widget.event!.time is DateTime) {
         _timeController.text = timeFormat.format(widget.event!.time as DateTime);
-      } else if (widget.event!.time is String) {
+      } else {
         // Asumiendo que el String está en formato HH:mm
-        try {
-          DateTime parsedTime = DateFormat("HH:mm").parse(widget.event!.time as String);
-          _timeController.text = timeFormat.format(parsedTime);
-        } catch (e) {
-          // Maneja el error si el formato es incorrecto
-          _timeController.text = '';
-        }
+      try {
+        DateTime parsedTime = DateFormat("HH:mm").parse(widget.event!.time);
+        _timeController.text = timeFormat.format(parsedTime);
+      } catch (e) {
+        // Maneja el error si el formato es incorrecto
+        _timeController.text = '';
       }
+      }
+    
       _descriptionController.text = widget.event!.description;
       _locationController.text = widget.event!.location;
       _costController.text = widget.event!.cost.toString();
@@ -154,6 +160,16 @@ class _AddEventsState extends State<AddEvents> {
     return await Geolocator.getCurrentPosition();
   }
 
+    Future<int?> getUserId() async {
+     
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _userId = prefs.getInt('userIdx') ?? 0;
+    setState(() {});
+    return null;
+  }
+  
+
+
   Future<void> saveData() async {
     if (widget.event != null) {
       // Update the event
@@ -169,7 +185,7 @@ class _AddEventsState extends State<AddEvents> {
                 "latitude": lat,
                 "longitude": long,
                 "status": _selectedStatus?.name,
-                "createdBy": 1,
+                "createdBy": _userId,
                 "guest": _guestsController.text,
                 "cost": int.parse(_costController.text),
               }));
@@ -203,7 +219,7 @@ class _AddEventsState extends State<AddEvents> {
           "latitude": lat,
           "longitude": long,
           "status": _selectedStatus?.name,
-          "createdBy": 1,
+          "createdBy": _userId,
           "guest": _guestsController.text,
           "cost": int.parse(_costController.text),
         }),
@@ -544,16 +560,14 @@ class _AddEventsState extends State<AddEvents> {
                             ),
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[1-9][0-9]*')),
+                              FilteringTextInputFormatter.allow(RegExp(r'[0-9]*')),
                             ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'El costo es requerido';
                               }
                               final numValue = int.tryParse(value);
-                              if (numValue == null || numValue <= 1) {
-                                return 'El costo debe ser mayor a 1';
-                              }
+                                
                               return null;
                             },
                           ),
@@ -719,7 +733,7 @@ class _AddEventsState extends State<AddEvents> {
                               "longitude": long,
                               "location_name": _locationController.text,
                               "status": _selectedStatus?.name,
-                              "createdBy": 3,
+                              "createdBy": _userId,
                             };
                             logger.d(event);
                             saveData();
