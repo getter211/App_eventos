@@ -5,7 +5,6 @@ import 'package:proyecto_eventos/pages/create_event.dart';
 import 'package:proyecto_eventos/pages/detail_event_screen.dart';
 import 'package:proyecto_eventos/pages/home_screen.dart';
 import 'package:proyecto_eventos/pages/login_screen.dart';
-import 'package:proyecto_eventos/pages/map_screen.dart';
 import 'package:proyecto_eventos/pages/register_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_eventos/providers/event_providers.dart';

@@ -4,7 +4,6 @@ import 'package:proyecto_eventos/dtos/response/get_all_events_response.dart';
 import 'package:proyecto_eventos/pages/calendar_screen.dart';
 import 'package:proyecto_eventos/pages/create_event.dart';
 import 'package:proyecto_eventos/pages/login_screen.dart';
-import 'package:proyecto_eventos/pages/map_screen.dart';
 import 'package:proyecto_eventos/pages/user_event_screen.dart';
 import 'package:proyecto_eventos/providers/event_providers.dart';
 import 'package:proyecto_eventos/providers/user_provider.dart'; // Importa UserProvider
