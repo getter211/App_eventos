@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto_eventos/pages/login_screen.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import 'package:proyecto_eventos/providers/user_provider.dart'; // Importa tu provider aquí
+import 'package:proyecto_eventos/providers/user_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterScreenState createState() => _RegisterScreenState();
 }
 
